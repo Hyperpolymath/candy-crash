@@ -38,6 +38,10 @@ class QuizAttemptsController < ApplicationController
     # Check if quiz is complete
     if @attempt.quiz_answers.count >= @quiz.questions.count
       @attempt.complete!
+
+      # Award achievements
+      AchievementService.check_and_award(current_user)
+
       redirect_to course_quiz_quiz_attempt_path(@course, @quiz, @attempt), notice: 'Quiz completed!'
     else
       redirect_to course_quiz_quiz_attempt_path(@course, @quiz, @attempt)

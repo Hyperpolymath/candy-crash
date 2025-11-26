@@ -14,6 +14,11 @@ class LessonsController < ApplicationController
     @progress = current_user.lesson_progresses.find_or_create_by(lesson: @lesson)
     @progress.mark_complete!
 
+    # Update enrollment progress and award achievements
+    enrollment = current_user.enrollments.find_by(course: @course)
+    enrollment&.update_progress!
+    AchievementService.check_and_award(current_user)
+
     respond_to do |format|
       format.html { redirect_to course_lesson_path(@course, @lesson), notice: 'Lesson completed!' }
       format.json { render json: { completed: true, progress: @progress } }
