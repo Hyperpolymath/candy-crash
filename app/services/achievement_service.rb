@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 class AchievementService
   # Award achievements based on user actions
   def self.check_and_award(user)

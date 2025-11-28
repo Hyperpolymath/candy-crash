@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 class Category < ApplicationRecord
   # Associations
   has_many :courses, dependent: :destroy

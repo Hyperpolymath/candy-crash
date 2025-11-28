@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 require 'rails_helper'
 
 RSpec.describe "quiz_attempts/new.html.erb", type: :view do

@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 class LessonsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_course

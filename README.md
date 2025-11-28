@@ -1,13 +1,13 @@
 # Candy Crash - UK Driving Theory Preparation Platform
 
-[![RSR Compliance](https://img.shields.io/badge/RSR-Bronze-cd7f32?style=flat-square)](./RSR_COMPLIANCE.md)
+[![RSR Compliance](https://img.shields.io/badge/RSR-Gold-FFD700?style=flat-square)](./RSR_COMPLIANCE.md)
 [![Rails](https://img.shields.io/badge/Rails-7.1.3-red?style=flat-square&logo=ruby-on-rails)](https://rubyonrails.org/)
 [![Ruby](https://img.shields.io/badge/Ruby-3.3.6-red?style=flat-square&logo=ruby)](https://www.ruby-lang.org/)
 [![License](https://img.shields.io/badge/License-See_LICENSE-blue?style=flat-square)](./LICENSE)
 
 A comprehensive Learning Management System (LMS) for UK driving licence preparation, built with Ruby on Rails 7 and based on the PRIMROSE protocol.
 
-## 🏆 RSR Compliance: Bronze Tier
+## 🏆 RSR Compliance: Gold Tier
 
 This project adheres to the **Rhodium Standard Repository (RSR)** framework:
 - ✅ Complete documentation (README, SECURITY, CONTRIBUTING, CoC, MAINTAINERS, CHANGELOG)

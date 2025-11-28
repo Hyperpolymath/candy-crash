@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 class CreateQuizAttempts < ActiveRecord::Migration[7.1]
   def change
     create_table :quiz_attempts do |t|

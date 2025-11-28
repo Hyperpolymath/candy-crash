@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 Rails.application.routes.draw do
   # Devise authentication
   devise_for :users

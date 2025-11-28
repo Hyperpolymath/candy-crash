@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do

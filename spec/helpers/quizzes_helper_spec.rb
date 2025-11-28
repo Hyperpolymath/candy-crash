@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 require 'rails_helper'
 
 # Specs in this file have access to a helper object that includes

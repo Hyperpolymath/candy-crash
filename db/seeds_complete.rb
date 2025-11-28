@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # This is comprehensive seed data - run with: rails db:seed
 
 require 'faker'

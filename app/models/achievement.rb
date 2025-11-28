@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 class Achievement < ApplicationRecord
   # Associations
   has_many :user_achievements, dependent: :destroy
