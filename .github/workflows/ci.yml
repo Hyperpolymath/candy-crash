@@ -180,13 +180,13 @@ jobs:
           required_docs=(
             "LICENSE.txt"
             "SECURITY.md"
-            "CONTRIBUTING.md"
-            "CODE_OF_CONDUCT.md"
-            "MAINTAINERS.md"
-            "CHANGELOG.md"
+            "CONTRIBUTING.adoc"
+            "CODE_OF_CONDUCT.adoc"
+            "MAINTAINERS.adoc"
+            "CHANGELOG.adoc"
             "FUNDING.yml"
             "GOVERNANCE.adoc"
-            "REVERSIBILITY.md"
+            "REVERSIBILITY.adoc"
             ".gitignore"
             ".gitattributes"
           )

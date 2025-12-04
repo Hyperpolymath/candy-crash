@@ -15,7 +15,7 @@ Candy Crash operates under principles of:
 * *Transparency*: All decisions documented and accessible
 * *Meritocracy*: Contributions earn influence
 * *Consensus-seeking*: Prefer agreement over authority
-* *Reversibility*: Most decisions can be undone (see REVERSIBILITY.md)
+* *Reversibility*: Most decisions can be undone (see REVERSIBILITY.adoc)
 * *Accountability*: Clear ownership and responsibility
 
 == Organizational Structure
@@ -28,7 +28,7 @@ Candy Crash implements the TPCF graduated trust model:
 
 *Access Level*: Full repository access, deployment rights, security decisions
 
-*Current Members*: See link:MAINTAINERS.md[MAINTAINERS.md]
+*Current Members*: See link:MAINTAINERS.adoc[MAINTAINERS.adoc]
 
 *Responsibilities*:
 
@@ -104,7 +104,7 @@ Candy Crash implements the TPCF graduated trust model:
 2. 7-day community discussion period
 3. Majority vote from Perimeter 1 maintainers (>50%)
 4. At least 2 Perimeter 1 approvals required
-5. Changes documented in CHANGELOG.md
+5. Changes documented in CHANGELOG.adoc
 
 *Timeline*: 7-14 days
 
@@ -243,4 +243,4 @@ This governance model may be amended through the Critical Decision process:
 
 Governance questions: Open issue with `governance` label
 
-Email: See link:MAINTAINERS.md[MAINTAINERS.md] for maintainer contacts
+Email: See link:MAINTAINERS.adoc[MAINTAINERS.adoc] for maintainer contacts
