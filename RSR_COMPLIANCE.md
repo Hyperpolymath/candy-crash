@@ -98,7 +98,7 @@ Candy Crash has achieved **RSR (Rhodium Standard Repository) Gold Tier** complia
 
 - **Rootless**: USER rails (UID 1000, non-root)
 - **Minimal base**: Chainguard Wolfi (reduced attack surface)
-- **Podman**: No privileged Docker daemon
+- **Podman**: No privileged Podman daemon
 - **Security labels**: OCI annotations in Containerfile
 
 ### ✅ Application Security

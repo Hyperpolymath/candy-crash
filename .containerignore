@@ -1,0 +1,81 @@
+# Container build ignore file for Podman
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+*.adoc
+!README.md
+CHANGELOG.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+GOVERNANCE.adoc
+MAINTAINERS.md
+REVERSIBILITY.md
+RSR_COMPLIANCE.md
+SECURITY.md
+CLAUDE.md
+
+# Development files
+.env.development
+.env.test
+.ruby-version
+.rspec
+.rubocop.yml
+
+# Test files
+spec/
+test/
+coverage/
+.rspec_status
+
+# Logs
+log/*
+*.log
+
+# Temporary files
+tmp/*
+storage/*
+
+# Node modules (if any)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# CI/CD files (not needed in container)
+.github/
+.gitlab-ci.yml
+justfile
+
+# Build artifacts
+public/assets/*
+public/packs/*
+
+# Database files (not needed in image)
+db/*.sqlite3
+db/*.sqlite3-*
+
+# Nix files (not needed in container)
+flake.nix
+flake.lock
+.envrc
+
+# Container files (avoid recursion)
+Containerfile
+.containerignore
+
+# License and compliance (keep these minimal in image)
+LICENSE.txt
+FUNDING.yml
