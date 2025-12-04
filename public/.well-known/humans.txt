@@ -86,11 +86,11 @@ Rhodium Standard Repository Framework:
 
 /* CONTRIBUTION */
 
-We welcome contributions! See CONTRIBUTING.md for guidelines.
+We welcome contributions! See CONTRIBUTING.adoc for guidelines.
 
-Code of Conduct: CODE_OF_CONDUCT.md
+Code of Conduct: CODE_OF_CONDUCT.adoc
 Security Policy: SECURITY.md
-Maintainers: MAINTAINERS.md
+Maintainers: MAINTAINERS.adoc
 
 /* CONTACT */
 
