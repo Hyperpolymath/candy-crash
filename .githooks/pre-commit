@@ -2,26 +2,165 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Git pre-commit hook for Candy Crash
-# Thin wrapper that delegates to Just recipes
+# Runs code quality checks before allowing commits
 #
 # Installation:
-#   ./.githooks/install.sh
+#   git config core.hooksPath .githooks
+#   chmod +x .githooks/pre-commit
 
-set -e
+set -e  # Exit on error
 
-# Skip in CI
+echo "🔍 Running pre-commit checks..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Check if running in CI (skip hooks in CI)
 if [ -n "$CI" ]; then
+    echo "⚠️  Running in CI, skipping pre-commit hooks"
     exit 0
 fi
 
-# Check if Just is installed
-if ! command -v just &> /dev/null; then
-    echo "⚠️  Just not installed - install with: cargo install just"
-    echo "    Or visit: https://github.com/casey/just#installation"
+# Function to print colored output
+print_success() {
+    echo -e "${GREEN}✓${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}✗${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}⚠${NC} $1"
+}
+
+# 1. Check for SPDX headers in Ruby files
+echo "📝 Checking SPDX license headers..."
+missing_spdx=0
+for file in $(git diff --cached --name-only --diff-filter=ACM | grep '\.rb$'); do
+    if [ -f "$file" ]; then
+        if ! grep -q "SPDX-License-Identifier" "$file"; then
+            print_error "Missing SPDX header: $file"
+            missing_spdx=1
+        fi
+    fi
+done
+
+if [ $missing_spdx -eq 0 ]; then
+    print_success "All Ruby files have SPDX headers"
+fi
+
+# 2. Run RuboCop on changed files
+echo "🔧 Running RuboCop linter..."
+ruby_files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.rb$' || true)
+if [ -n "$ruby_files" ]; then
+    if command -v rubocop &> /dev/null; then
+        if bundle exec rubocop $ruby_files; then
+            print_success "RuboCop checks passed"
+        else
+            print_error "RuboCop found issues"
+            echo ""
+            echo "Fix with: bundle exec rubocop -a $ruby_files"
+            exit 1
+        fi
+    else
+        print_warning "RuboCop not installed, skipping"
+    fi
+else
+    print_success "No Ruby files changed"
+fi
+
+# 3. Check for debugging code
+echo "🐛 Checking for debugging statements..."
+debug_patterns="binding.pry|debugger|console.log|byebug"
+if git diff --cached | grep -E "$debug_patterns"; then
+    print_error "Found debugging statements in staged changes"
+    echo "Remove: binding.pry, debugger, console.log, byebug"
+    exit 1
+else
+    print_success "No debugging statements found"
+fi
+
+# 4. Check for merge conflict markers
+echo "⚔️  Checking for merge conflict markers..."
+if git diff --cached | grep -E "^(<<<<<<<|>>>>>>>|=======)"; then
+    print_error "Found merge conflict markers in staged changes"
+    exit 1
+else
+    print_success "No merge conflict markers"
+fi
+
+# 5. Check for TODO/FIXME in committed code (warning only)
+echo "📋 Checking for TODO/FIXME..."
+todos=$(git diff --cached | grep -E "TODO|FIXME" || true)
+if [ -n "$todos" ]; then
+    print_warning "Found TODO/FIXME in changes (not blocking)"
+    echo "$todos"
+fi
+
+# 6. Validate YAML files
+echo "📄 Validating YAML files..."
+yaml_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(yml|yaml)$' || true)
+if [ -n "$yaml_files" ]; then
+    for file in $yaml_files; do
+        if [ -f "$file" ]; then
+            if command -v ruby &> /dev/null; then
+                if ruby -e "require 'yaml'; YAML.load_file('$file')" 2>/dev/null; then
+                    print_success "YAML valid: $file"
+                else
+                    print_error "Invalid YAML: $file"
+                    exit 1
+                fi
+            fi
+        fi
+    done
+else
+    print_success "No YAML files changed"
+fi
+
+# 7. Check file size (prevent large files)
+echo "📦 Checking file sizes..."
+large_files=0
+max_size=5242880  # 5 MB in bytes
+
+for file in $(git diff --cached --name-only --diff-filter=ACM); do
+    if [ -f "$file" ]; then
+        size=$(wc -c < "$file")
+        if [ $size -gt $max_size ]; then
+            print_error "File too large (>5MB): $file ($(numfmt --to=iec-i --suffix=B $size))"
+            large_files=1
+        fi
+    fi
+done
+
+if [ $large_files -eq 1 ]; then
     echo ""
-    echo "Skipping pre-commit checks (not blocking)"
-    exit 0
+    echo "Consider using Git LFS for large files"
+    exit 1
 fi
 
-# Run pre-commit checks via Just
-just pre-commit-checks
+# 8. Check for secrets (basic check)
+echo "🔐 Checking for potential secrets..."
+secret_patterns="password|secret|api_key|private_key|ACCESS_KEY"
+suspicious=$(git diff --cached | grep -iE "$secret_patterns" | grep -v "SPDX\|TODO\|# password\|'password'\|\"password\"" || true)
+if [ -n "$suspicious" ]; then
+    print_warning "Found potential secrets in changes (review carefully):"
+    echo "$suspicious"
+    echo ""
+    read -p "Continue commit? (y/N): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        print_error "Commit aborted by user"
+        exit 1
+    fi
+fi
+
+# Success!
+echo ""
+print_success "All pre-commit checks passed! 🎉"
+echo ""
+
+exit 0

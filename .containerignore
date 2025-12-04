@@ -1,81 +1,37 @@
-# Container build ignore file for Podman
-# SPDX-License-Identifier: GPL-3.0-or-later
+# See https://docs.docker.com/engine/reference/builder/#containerignore-file for more about ignoring files.
 
-# Version control
-.git
-.gitignore
-.gitattributes
+# Ignore git directory.
+/.git/
 
-# Documentation
-*.md
-*.adoc
-!README.md
-CHANGELOG.md
-CODE_OF_CONDUCT.md
-CONTRIBUTING.md
-GOVERNANCE.adoc
-MAINTAINERS.md
-REVERSIBILITY.md
-RSR_COMPLIANCE.md
-SECURITY.md
-CLAUDE.md
+# Ignore bundler config.
+/.bundle
 
-# Development files
-.env.development
-.env.test
-.ruby-version
-.rspec
-.rubocop.yml
+# Ignore all environment files (except templates).
+/.env*
+!/.env*.erb
 
-# Test files
-spec/
-test/
-coverage/
-.rspec_status
+# Ignore all default key files.
+/config/master.key
+/config/credentials/*.key
 
-# Logs
-log/*
-*.log
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
 
-# Temporary files
-tmp/*
-storage/*
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/.keep
 
-# Node modules (if any)
-node_modules/
-npm-debug.log
-yarn-error.log
+# Ignore storage (uploaded files in development and any SQLite databases).
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/.keep
 
-# IDE/Editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# CI/CD files (not needed in container)
-.github/
-.gitlab-ci.yml
-justfile
-
-# Build artifacts
-public/assets/*
-public/packs/*
-
-# Database files (not needed in image)
-db/*.sqlite3
-db/*.sqlite3-*
-
-# Nix files (not needed in container)
-flake.nix
-flake.lock
-.envrc
-
-# Container files (avoid recursion)
-Containerfile
-.containerignore
-
-# License and compliance (keep these minimal in image)
-LICENSE.txt
-FUNDING.yml
+# Ignore assets.
+/node_modules/
+/app/assets/builds/*
+!/app/assets/builds/.keep
+/public/assets
