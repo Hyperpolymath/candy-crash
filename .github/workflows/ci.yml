@@ -253,9 +253,7 @@ jobs:
 
       - name: Set up Podman
         run: |
-          . /etc/os-release
-          echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list
-          curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
+          # Ubuntu 22.04+ has Podman in default repos
           sudo apt-get update
           sudo apt-get -y install podman
 
