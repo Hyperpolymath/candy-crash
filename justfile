@@ -476,6 +476,44 @@ rsr-report:
     @echo "📍 Exceptions: Type safety (Ruby), GitLab (GitHub used)"
     @echo ""
 
+# === DENO (JAVASCRIPT/TYPESCRIPT RUNTIME) ===
+
+# Check Deno code without executing
+deno-check:
+    deno check app/assets/javascripts/**/*.js
+
+# Lint JavaScript/TypeScript with Deno
+deno-lint:
+    deno lint app/assets/javascripts/
+
+# Format JavaScript/TypeScript with Deno
+deno-fmt:
+    deno fmt app/assets/javascripts/
+
+# Check formatting without changing files
+deno-fmt-check:
+    deno fmt --check app/assets/javascripts/
+
+# Run Deno tasks (from deno.json)
+deno-task TASK:
+    deno task {{TASK}}
+
+# Show Deno version and info
+deno-info:
+    @echo "Deno version:"
+    @deno --version
+    @echo ""
+    @echo "Deno configuration:"
+    @deno info
+
+# Cache Deno dependencies
+deno-cache:
+    deno cache app/assets/javascripts/**/*.js
+
+# Run all Deno quality checks
+deno-quality: deno-check deno-lint deno-fmt-check
+    @echo "✅ All Deno checks passed!"
+
 # === PODMAN (CONTAINER MANAGEMENT) ===
 
 # Build Podman/OCI image
@@ -516,3 +554,61 @@ podman-inspect:
 # Clean up Podman images and containers
 podman-clean:
     podman system prune -af
+
+# === HELP & DOCUMENTATION ===
+
+# Show comprehensive help and usage guide
+help-all:
+    @echo "🍬 Candy Crash - Just Task Runner Help"
+    @echo "======================================"
+    @echo ""
+    @echo "USAGE: just <recipe> [arguments]"
+    @echo ""
+    @echo "📋 QUICK START"
+    @echo "  just --list              List all available recipes"
+    @echo "  just serve               Start development server"
+    @echo "  just test                Run test suite"
+    @echo "  just db-setup            Setup database"
+    @echo ""
+    @echo "📚 RECIPE CATEGORIES"
+    @echo "  • Development:   serve, console, generate"
+    @echo "  • Database:      db-*, (create, migrate, rollback, reset, seed, setup)"
+    @echo "  • Testing:       test, test-coverage, test-file, test-grep"
+    @echo "  • Code Quality:  lint, lint-fix, security, audit, quality"
+    @echo "  • Build:         assets-*, (precompile, clean)"
+    @echo "  • RSR:           validate-rsr, validate-docs, audit-licence, rsr-report"
+    @echo "  • Git Hooks:     pre-commit-checks, pre-push-checks, hook-*"
+    @echo "  • Deno:          deno-*, (check, lint, fmt, quality)"
+    @echo "  • Podman:        podman-*, (build, run, shell, clean)"
+    @echo "  • Help:          help, help-all, help-category"
+    @echo ""
+    @echo "💡 EXAMPLES"
+    @echo "  just db-reset                 Reset database (drop + create + migrate + seed)"
+    @echo "  just test-file spec/models/   Run tests for specific file"
+    @echo "  just lint-fix                 Auto-fix RuboCop violations"
+    @echo "  just podman-build             Build container image"
+    @echo "  just deno-quality             Run all Deno checks"
+    @echo ""
+    @echo "📖 For detailed recipe info: just --show <recipe>"
+    @echo ""
+
+# Show help for specific category
+help-category CATEGORY:
+    @just --list | grep -i {{CATEGORY}} || echo "No recipes found for category: {{CATEGORY}}"
+
+# Show detailed information about a recipe
+help-recipe RECIPE:
+    @just --show {{RECIPE}}
+
+# Generate shell completions
+completions SHELL:
+    @just --completions {{SHELL}}
+
+# Show recipe dependency graph (requires graphviz)
+dependency-graph:
+    @just --dump | dot -Tpng > justfile-graph.png
+    @echo "Dependency graph saved to justfile-graph.png"
+
+# Count total number of recipes
+recipe-count:
+    @echo "Total recipes: $(just --list --unsorted | tail -n +2 | wc -l)"
