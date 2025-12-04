@@ -162,7 +162,7 @@ validate-rsr:
     @echo "✅ Build System:"
     @test -f justfile && echo "  ✓ justfile" || echo "  ✗ justfile missing"
     @test -f .github/workflows/ci.yml && echo "  ✓ CI/CD (GitHub Actions)" || echo "  ✗ CI/CD missing"
-    @test -f Dockerfile && echo "  ✓ Dockerfile" || echo "  ✗ Dockerfile missing"
+    @test -f Containerfile && echo "  ✓ Containerfile (Podman)" || echo "  ✗ Containerfile missing"
     @echo ""
     @echo "✅ Testing:"
     @test -f spec/spec_helper.rb && echo "  ✓ RSpec configured" || echo "  ✗ RSpec not configured"
@@ -216,23 +216,6 @@ loc:
 stats:
     bin/rails stats
 
-# === DOCKER ===
-
-# Build Docker image
-docker-build:
-    docker build -t candy-crash .
-
-# Run Docker container
-docker-run:
-    docker run -p 3000:3000 candy-crash
-
-# Docker Compose up
-docker-up:
-    docker-compose up -d
-
-# Docker Compose down
-docker-down:
-    docker-compose down
 
 # === GIT ===
 
@@ -492,3 +475,44 @@ rsr-report:
     @echo "🎯 OVERALL GRADE: RSR GOLD (with documented exceptions)"
     @echo "📍 Exceptions: Type safety (Ruby), GitLab (GitHub used)"
     @echo ""
+
+# === PODMAN (CONTAINER MANAGEMENT) ===
+
+# Build Podman/OCI image
+podman-build:
+    podman build -t candy-crash:latest -f Containerfile .
+
+# Run Podman container (development)
+podman-run:
+    podman run --rm -p 3000:3000 \
+        -e RAILS_ENV=production \
+        -e SECRET_KEY_BASE=$(openssl rand -hex 64) \
+        candy-crash:latest
+
+# Run Podman container (interactive shell)
+podman-shell:
+    podman run --rm -it \
+        -v $(pwd):/app \
+        -p 3000:3000 \
+        candy-crash:latest /bin/bash
+
+# Run with Podman Compose (if using compose)
+podman-compose-up:
+    podman-compose up -d
+
+# Stop Podman Compose
+podman-compose-down:
+    podman-compose down
+
+# Push to container registry (requires login)
+podman-push registry:
+    podman tag candy-crash:latest {{registry}}/candy-crash:latest
+    podman push {{registry}}/candy-crash:latest
+
+# Inspect container image
+podman-inspect:
+    podman inspect candy-crash:latest
+
+# Clean up Podman images and containers
+podman-clean:
+    podman system prune -af

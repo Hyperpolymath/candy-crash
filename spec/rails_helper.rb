@@ -2,7 +2,43 @@
 
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+# SimpleCov configuration - must be at the top before any application code
+if ENV['COVERAGE'] == 'true' || ENV['CI']
+  require 'simplecov'
+  require 'simplecov-lcov'
+
+  SimpleCov::Formatter::LcovFormatter.config do |c|
+    c.report_with_single_file = true
+    c.single_report_path = 'coverage/lcov.info'
+  end
+
+  SimpleCov.formatters = [
+    SimpleCov::Formatter::HTMLFormatter,
+    SimpleCov::Formatter::LcovFormatter
+  ]
+
+  SimpleCov.start 'rails' do
+    add_filter '/spec/'
+    add_filter '/config/'
+    add_filter '/vendor/'
+    add_filter '/db/'
+
+    add_group 'Models', 'app/models'
+    add_group 'Controllers', 'app/controllers'
+    add_group 'Helpers', 'app/helpers'
+    add_group 'Services', 'app/services'
+    add_group 'Policies', 'app/policies'
+    add_group 'Mailers', 'app/mailers'
+    add_group 'Jobs', 'app/jobs'
+
+    minimum_coverage 80
+    minimum_coverage_by_file 50
+  end
+end
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
+require 'spec_helper'
+ENV['RAILS_ENV'] ||= 'test'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'

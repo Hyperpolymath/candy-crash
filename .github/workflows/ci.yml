@@ -58,14 +58,15 @@ jobs:
           bin/rails db:create
           bin/rails db:schema:load
 
-      - name: Run tests
-        run: bundle exec rspec --format documentation
-
+      - name: Run tests with coverage
+        run: COVERAGE=true bundle exec rspec --format documentation
+        env:
+          COVERAGE: true
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         if: always()
         with:
-          files: ./coverage/coverage.xml
+          files: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
 
@@ -158,3 +159,116 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+
+  rsr-validation:
+    name: RSR Compliance Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.6
+          bundler-cache: true
+
+      - name: Check documentation files
+        run: |
+          echo "📚 Validating RSR documentation requirements..."
+          required_docs=(
+            "LICENSE.txt"
+            "SECURITY.md"
+            "CONTRIBUTING.md"
+            "CODE_OF_CONDUCT.md"
+            "MAINTAINERS.md"
+            "CHANGELOG.md"
+            "FUNDING.yml"
+            "GOVERNANCE.adoc"
+            "REVERSIBILITY.md"
+            ".gitignore"
+            ".gitattributes"
+          )
+          missing=0
+          for doc in "${required_docs[@]}"; do
+            if [ ! -f "$doc" ]; then
+              echo "❌ Missing: $doc"
+              missing=1
+            else
+              echo "✅ $doc"
+            fi
+          done
+          if [ $missing -eq 1 ]; then
+            exit 1
+          fi
+
+      - name: Check .well-known files
+        run: |
+          echo "📁 Validating .well-known directory..."
+          wellknown_files=(
+            "public/.well-known/security.txt"
+            "public/.well-known/ai.txt"
+            "public/.well-known/humans.txt"
+            "public/.well-known/consent-required.txt"
+            "public/.well-known/provenance.json"
+          )
+          missing=0
+          for file in "${wellknown_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing: $file"
+              missing=1
+            else
+              echo "✅ $file"
+            fi
+          done
+          if [ $missing -eq 1 ]; then
+            exit 1
+          fi
+
+      - name: Validate SPDX headers
+        run: |
+          echo "📝 Checking SPDX headers in Ruby files..."
+          missing=0
+          for file in $(find app lib config -name "*.rb" 2>/dev/null | head -50); do
+            if ! grep -q "SPDX-License-Identifier" "$file"; then
+              echo "❌ Missing SPDX header: $file"
+              missing=1
+            fi
+          done
+          if [ $missing -eq 0 ]; then
+            echo "✅ All checked files have SPDX headers"
+          else
+            echo "⚠️  Some files missing SPDX headers"
+            exit 1
+          fi
+
+  container-build:
+    name: Build Container Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Podman
+        run: |
+          . /etc/os-release
+          echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list
+          curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
+          sudo apt-get update
+          sudo apt-get -y install podman
+
+      - name: Build Podman image
+        run: |
+          podman build -t candy-crash:test -f Containerfile .
+
+      - name: Test container
+        run: |
+          podman run --rm candy-crash:test bundle --version
+          echo "✅ Container builds and runs successfully"
+
+      - name: Inspect image
+        run: |
+          podman inspect candy-crash:test | jq '.[0].Config.User'
+          echo "✅ Container inspection complete"
