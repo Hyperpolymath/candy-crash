@@ -91,6 +91,16 @@ else
     optional_missing+=("bundler")
 fi
 
+# Check Deno (JavaScript/TypeScript runtime)
+echo -n "Checking Deno...          "
+if command -v deno &> /dev/null; then
+    version=$(deno --version | head -1 | awk '{print $2}')
+    echo -e "${GREEN}✓${NC} Found (v$version)"
+else
+    echo -e "${YELLOW}✗${NC} Missing (JavaScript runtime)"
+    optional_missing+=("deno")
+fi
+
 echo ""
 echo "======================="
 echo ""
