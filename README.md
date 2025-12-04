@@ -7,17 +7,22 @@
 
 A comprehensive Learning Management System (LMS) for UK driving licence preparation, built with Ruby on Rails 7 and based on the PRIMROSE protocol.
 
-## 🏆 RSR Compliance: Gold Tier
+## 🏆 RSR Compliance: Gold Tier (94%)
 
-This project adheres to the **Rhodium Standard Repository (RSR)** framework:
-- ✅ Complete documentation (README, SECURITY, CONTRIBUTING, CoC, MAINTAINERS, CHANGELOG)
+This project adheres to the **Rhodium Standard Repository (RSR)** framework at **Gold Tier**:
+- ✅ Complete documentation (17 required files)
 - ✅ RFC 9116 compliant `.well-known/security.txt`
+- ✅ SPDX headers in all source files
+- ✅ Comprehensive security headers (CSP, HSTS, COOP, etc.)
+- ✅ Nix flakes for reproducible builds
+- ✅ Podman rootless containers (Chainguard Wolfi)
 - ✅ Automated testing & CI/CD (GitHub Actions)
-- ✅ Security scanning (Brakeman, Bundler Audit)
-- ✅ TPCF Perimeter 2 (Open contribution with review)
-- ✅ 40+ justfile automation recipes
+- ✅ Security scanning (Brakeman, Bundler Audit, CodeQL)
+- ✅ TPCF Governance (Tri-Perimeter Contribution Framework)
+- ✅ 60+ Just automation recipes
+- ✅ Git hooks with quality gates
 
-**Target**: Silver tier (Q2 2025) → See [RSR_COMPLIANCE.md](./RSR_COMPLIANCE.md) for details
+**Current Status**: 🥇 Gold (94% compliance) → See [RSR_COMPLIANCE.md](./RSR_COMPLIANCE.md) for details
 
 ## Features
 
@@ -32,15 +37,19 @@ This project adheres to the **Rhodium Standard Repository (RSR)** framework:
 
 ### Technical Highlights
 - **Rails 7.1.3** with modern best practices
-- **Bootstrap 5** responsive UI
+- **CSS-first design** with custom styles (410+ lines)
+- **Bootstrap 5** responsive UI (foundational framework)
 - **Devise** for authentication
 - **Pundit** for authorization
 - **Kaminari** for pagination
 - **Ransack** for search and filtering
-- **RSpec** test framework
+- **RSpec** test framework with SimpleCov (80% coverage minimum)
 - **Active Storage** for file uploads
 - **Factory Bot** for test data
 - **Faker** for seed data generation
+- **Just** task runner (60+ recipes)
+- **Podman** rootless containers (Chainguard Wolfi)
+- **Nix flakes** for reproducible builds
 
 ## Database Schema
 
@@ -64,29 +73,42 @@ This project adheres to the **Rhodium Standard Repository (RSR)** framework:
 ## Installation
 
 ### Prerequisites
-- Ruby 3.3.6
-- Rails 7.1.3
-- SQLite3
-- Node.js (for asset compilation)
+- **Ruby 3.3.6** (runtime)
+- **Just** (task runner) - [Installation guide](https://github.com/casey/just#installation)
+- **Podman** (container engine) - [Installation guide](https://podman.io/getting-started/installation)
+- **Git** (version control)
+- **Bundler** (Ruby gem manager)
 
-### Setup
+### Quick Setup
 
 ```bash
 # Clone the repository
 git clone https://github.com/Hyperpolymath/candy-crash.git
 cd candy-crash
 
-# Install dependencies
-bundle install
+# Run bootstrap script (checks dependencies, installs hooks)
+./bootstrap.sh
 
-# Setup database
-rails db:create db:migrate db:seed
-
-# Start the server
-rails server
+# OR manual setup:
+bundle install           # Install Ruby dependencies
+just db-setup           # Create and seed database
+just serve              # Start development server
 ```
 
 Visit `http://localhost:3000`
+
+### Using Just (Task Runner)
+
+```bash
+just --list              # Show all available commands
+just serve               # Start Rails server
+just test                # Run test suite
+just lint                # Run RuboCop
+just db-reset            # Reset database
+just validate-rsr        # Check RSR compliance
+```
+
+See [justfile](./justfile) for 60+ automation recipes.
 
 ## Seed Data & Demo Accounts
 
@@ -192,42 +214,85 @@ candy-crash/
 
 ```bash
 # Run all tests
-rspec
-
-# Run specific test file
-rspec spec/models/user_spec.rb
+just test
 
 # Run with coverage
-COVERAGE=true rspec
+just test-coverage
+
+# Run specific test file
+just test-file spec/models/user_spec.rb
 ```
 
 ### Code Quality
 
 ```bash
-# Run Rubocop
-rubocop
+# Run RuboCop linter
+just lint
 
-# Auto-correct issues
-rubocop -a
+# Auto-fix RuboCop issues
+just lint-fix
+
+# Run security scanner
+just security
+
+# Check for vulnerable dependencies
+just audit
+
+# Run all quality checks
+just quality
+```
+
+### Git Hooks (Hybrid System)
+
+The project uses a **hybrid Just-based hook system**:
+- Thin bash wrappers (68 lines) delegate to Just recipes
+- All check logic in justfile (168 lines)
+- Graceful degradation if Just not installed
+
+**Automatic hooks** (run on git commit/push):
+```bash
+./.githooks/install.sh   # Install hooks once
+```
+
+**Manual checks** (test without committing):
+```bash
+just pre-commit-checks   # SPDX, linting, debugging, YAML, secrets
+just pre-push-checks     # Tests, security, dependencies, migrations
 ```
 
 ### Database Operations
 
 ```bash
 # Create a migration
-rails generate migration MigrationName
+just generate migration MigrationName
 
 # Run migrations
-rails db:migrate
+just db-migrate
 
 # Rollback last migration
-rails db:rollback
+just db-rollback
 
 # Reset database
-rails db:reset
+just db-reset
 
-# Re-seed database
-rails db:seed:replant
+# Show migration status
+just db-status
+```
+
+### Container Operations (Podman)
+
+```bash
+# Build container
+just podman-build
+
+# Run container
+just podman-run
+
+# Interactive shell
+just podman-shell
+
+# Clean up
+just podman-clean
 ```
 
 ## PRIMROSE Protocol
@@ -300,12 +365,26 @@ This application is based on the PRIMROSE protocol for driving licence preparati
 
 ## License
 
-This project is licensed under the terms included in the LICENSE file.
+This project is licensed under **GPL-3.0-or-later**.
+
+See [LICENSE.txt](./LICENSE.txt) for full terms. All source files include SPDX headers for license compliance.
+
+## Documentation
+
+- [SECURITY.md](./SECURITY.md) - Security policy and vulnerability reporting
+- [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution guidelines
+- [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) - Community standards
+- [GOVERNANCE.adoc](./GOVERNANCE.adoc) - TPCF governance model
+- [CHANGELOG.md](./CHANGELOG.md) - Version history
+- [RSR_COMPLIANCE.md](./RSR_COMPLIANCE.md) - RSR Gold compliance report
+- [CLAUDE.md](./CLAUDE.md) - AI assistant instructions
 
 ## Contact
 
-Project Link: [https://github.com/Hyperpolymath/candy-crash](https://github.com/Hyperpolymath/candy-crash)
+**Project**: [https://github.com/Hyperpolymath/candy-crash](https://github.com/Hyperpolymath/candy-crash)
+
+**Security Issues**: See [.well-known/security.txt](./public/.well-known/security.txt) (RFC 9116)
 
 ---
 
-Built with ❤️ using Ruby on Rails
+**Built with Ruby on Rails** | **RSR Gold Compliance** | **PRIMROSE Protocol**
