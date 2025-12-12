@@ -47,3 +47,7 @@ See TS_CONVERSION_NEEDED.md for full migration guide.
 - No MD5/SHA1 for security (use SHA256+)
 - HTTPS only (no HTTP URLs)
 - No hardcoded secrets
+
+## ⚠️ MIGRATION REQUIRED
+Ruby code must be migrated to Rust.
+See `.migration/RUBY_TO_RUST.md`
